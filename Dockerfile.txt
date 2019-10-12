@@ -1,0 +1,19 @@
+FROM frolvlad/alpine-oraclejdk8:latest
+MAINTAINER QuirianCordova
+VOLUME /tmp
+ADD reserveproxy-1.0-SNAPSHOT.jar app.jar
+RUN sh -c 'touch /app.jar'
+ENTRYPOINT [ "sh", "-c", "java -jar /app.jar" ]
+
+FROM php:7-fpm
+MAINTAINER QuirianCordova
+ENV REFRESHED_AT 2016-08-13
+RUN apt-get update && \
+     apt-get install --no-install-recommends --no-install-suggests -y vim less zlib1g-dev \
+     libxml2-dev libmcrypt-dev && \
+     rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-install mysqli
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install opcache
+RUN docker-php-ext-install mcrypt
+HEALTCHECK
